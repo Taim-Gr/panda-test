@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import useSound from "use-sound";
 import pandaImage from "@/public/images/panda.png";
 import { v4 as uuidv4 } from "uuid";
+import yellowCircle from "@/public/images/letterCircle.png";
+import sweetContainer from "@/public/images/sweet-container.png";
+import explosionEffect from "@/public/images/explosionEffect.png";
 export default function Home() {
   // letter game settings
   const totalW = 20;
@@ -156,7 +159,7 @@ export default function Home() {
       {/* Header */}
       <div className="flex-1 bg-green-500 text-white text-center font-bold text-4xl flex items-center justify-center">
         <button onClick={backGroundMusicToggle}>
-          {backgroundIsPlaying ? "🔇" : "🔊"}
+          {backgroundIsPlaying ? "🔊" : "🔇"}
         </button>
       </div>
 
@@ -192,18 +195,11 @@ export default function Home() {
                   y: 250,
                   opacity: 1,
                   scale: 0.5,
-                  // x: letter.left,
-                  borderRadius: "50%",
-                  backgroundColor: "#f59e0b",
                 }}
                 animate={{
                   y: -400,
                   opacity: letter.isPopping ? [1, 1, 0] : 1,
                   scale: letter.isPopping ? [1, 1.1, 1.2] : [0.5, 1.1, 1.1],
-                  borderRadius: "50%",
-                  backgroundColor: letter.isPopping
-                    ? ["#f59e0b", "#fbbf24", "#fde047"]
-                    : "#f59e0b",
                 }}
                 transition={{
                   delay: letter.isPopping ? 0 : letter.randomDelay,
@@ -211,13 +207,13 @@ export default function Home() {
                   ease: "easeIn",
                   times: letter.isPopping ? [0, 0.5, 1] : [0, 0.3, 1],
                 }}
-                className={`absolute bottom-0 text-xl font-extrabold flex justify-center items-center text-red-600 cursor-pointer ${
+                className={`absolute bottom-0 flex justify-center items-center cursor-pointer ${
                   letter.isPopping ? "mix-blend-screen" : ""
                 }`}
                 style={{
                   left: `${letter.left}%`,
-                  width: letter.isPopping ? "55px" : "50px",
-                  height: letter.isPopping ? "55px" : "50px",
+                  width: letter.isPopping ? "85px" : "80px",
+                  height: letter.isPopping ? "85px" : "80px",
                 }}
                 onClick={() =>
                   !letter.isPopping
@@ -225,9 +221,47 @@ export default function Home() {
                     : null
                 }
               >
+                {/* Yellow circle explodes */}
+                <motion.div
+                  className="absolute w-full h-full flex items-center justify-center"
+                  initial={false}
+                  animate={
+                    letter.isPopping
+                      ? {
+                          scale: [1, 1.1, 1.2],
+                          opacity: [1, 1, 0],
+                          filter: [
+                            "brightness(1)",
+                            "brightness(2.5)",
+                            "brightness(1.2)",
+                            "brightness(0)",
+                          ],
+                        }
+                      : {
+                          scale: 1,
+                          opacity: 1,
+                          filter: "brightness(1)",
+                        }
+                  }
+                  transition={{
+                    duration: letter.isPopping ? 0.2 : 0,
+                    ease: "easeOut",
+                    times: [0, 0.3, 1],
+                  }}
+                >
+                  <Image
+                    src={yellowCircle}
+                    alt="yellow circle"
+                    className="w-full h-full object-contain"
+                    priority
+                  />
+                </motion.div>
+
+                {/* The letter */}
                 <motion.span
+                  className="relative z-10 text-2xl font-extrabold text-red-600"
                   animate={{
-                    opacity: letter.isPopping ? [1, 0.5, 0] : 1,
+                    opacity: letter.isPopping ? 0 : 1,
                     scale: letter.isPopping ? [1, 1.2, 0] : 1,
                   }}
                   transition={{ duration: 0.3 }}
@@ -235,21 +269,84 @@ export default function Home() {
                   {letter.char}
                 </motion.span>
 
+                {/*  EXPLOSION EFFECT */}
                 {letter.isPopping && (
                   <motion.div
-                    style={{
-                      textShadow:
-                        letter.char === "Z"
-                          ? "0 0 10px #f87171, 0 0 20px #ef4444, 0 0 30px #dc2626"
-                          : "0 0 10px #ffbf00, 0 0 20px #ff8c00",
-                    }}
-                    className="absolute -top-12 left-1/2 transform -translate-x-1/2 text-2xl font-extrabold text-white whitespace-nowrap"
-                    initial={{ y: 20, opacity: 0.8, scale: 0.8 }}
-                    animate={{ y: 0, opacity: 1, scale: 1 }}
-                    exit={{ y: -10, opacity: 0 }}
-                    transition={{ duration: 0.8, delay: 0.1 }}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1.6, opacity: 1 }}
+                    exit={{ scale: 0.4, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: "easeOut" }}
+                    className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                    style={{ zIndex: 5 }}
                   >
-                    {letter.char === "W" ? "Nice!" : "Oops!"}
+                    <Image
+                      src={explosionEffect}
+                      alt="explosion"
+                      className="w-[150px] h-[150px] object-contain"
+                      priority
+                    />
+                  </motion.div>
+                )}
+
+                {/* Nice + ops */}
+                {letter.isPopping && (
+                  <motion.div
+                    className="absolute left-1/2"
+                    initial={{
+                      y: 40,
+                      opacity: 0.8,
+                      scale: 0.8,
+                      x: "-50%",
+                    }}
+                    animate={{
+                      y: -40,
+                      opacity: 1,
+                      scale: 1,
+                    }}
+                    exit={{
+                      y: -80,
+                      opacity: 0,
+                    }}
+                    transition={{
+                      duration: 1,
+                      delay: 0.1,
+                      ease: "easeOut",
+                      times: [0.2, 0.4, 1],
+                    }}
+                    style={{
+                      top: "-120px",
+                    }}
+                  >
+                    <div className="relative w-48 h-32 flex items-center justify-center">
+                      <Image
+                        src={sweetContainer}
+                        alt={letter.char === "W" ? "Nice" : "Oops"}
+                        className="w-full h-full object-contain drop-shadow-lg"
+                        priority
+                      />
+
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <motion.p
+                          className="text-2xl md:text-3xl font-extrabold text-center px-2"
+                          initial={{ scale: 0.5 }}
+                          animate={{ scale: 1 }}
+                          style={{
+                            color: letter.char === "W" ? "#FFD700" : "#FF6B6B",
+                            textShadow: `
+                    2px 2px 0px #000,
+                    -1px -1px 0px #000,
+                    1px -1px 0px #000,
+                    -1px 1px 0px #000,
+                    0px 4px 8px rgba(0,0,0,0.5)
+                  `,
+                            WebkitTextStroke: "1px black",
+                            paddingTop: "8px",
+                          }}
+                        >
+                          {letter.char === "W" ? "Nice!" : "Oops!"}
+                        </motion.p>
+                      </div>
+                    </div>
                   </motion.div>
                 )}
               </motion.div>
