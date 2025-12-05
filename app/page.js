@@ -7,8 +7,8 @@ import pandaImage from "@/public/images/panda.png";
 import { v4 as uuidv4 } from "uuid";
 export default function Home() {
   // letter game settings
-  const totalW = 5;
-  const totalZ = 7;
+  const totalW = 20;
+  const totalZ = 20;
   const spawnInterval = 800;
   const repeatDelay = 4000;
 
@@ -122,9 +122,10 @@ export default function Home() {
 
       // const leftPosition = Math.random() * 160;
       const leftPercentage = Math.random() * 80;
-      const duration = Math.random() * 3 + 4;
-      const randomDelay = Math.random() * 0.45;
-
+      // const duration = Math.random() * 3 + 4;
+      const duration = 4 + (leftPercentage / 100) * 1.5;
+      // const randomDelay = Math.random() * 0.45;
+      const randomDelay = (leftPercentage / 100) * 0.5;
       const newLetter = {
         id: `letter-${uuidv4()}`,
         char: letter,
