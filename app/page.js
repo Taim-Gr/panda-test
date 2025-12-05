@@ -40,7 +40,12 @@ export default function Home() {
     id: "oops-sound",
   });
 
-  const [popUpSound] = useSound("/sounds/pop-423717.mp3", {
+  const [popUpSound1] = useSound("/sounds/pop-1.MP3", {
+    volume: 0.7,
+    interrupt: true,
+    id: "pop-sound",
+  });
+  const [popUpSound2] = useSound("/sounds/pop-2.MP3", {
     volume: 0.7,
     interrupt: true,
     id: "pop-sound",
@@ -69,8 +74,9 @@ export default function Home() {
         letter.id === id ? { ...letter, isPopping: true } : letter
       )
     );
-
-    popUpSound();
+    const random = Math.round(Math.random()) + 1;
+    console.log("random", random);
+    random == 1 ? popUpSound1() : popUpSound2();
 
     if (char === "W") {
       playNiceSound();
